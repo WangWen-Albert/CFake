@@ -19,10 +19,13 @@
  *
  *          When using FAKE_ON to fake one func with anther mock in your
  *          test case, the mock will be called instead of the faked func.
- *          And the fake could be cancel at the end of the case. 
+ *          And the fake action could be cancel at the end of the case. 
+ *
+ *          In another word, one func could be dynamically replaced as any
+ *          other stub during testing program is running.
  *
  *          You may add this library to an existing unit testing framework
- *          to power your testing ability, e.g. cmockery, CppUnit.
+ *          to power your testing performance, e.g. cmockery, CppUnit.
  ******************************************************************************/
 
 #ifndef __C_FAKE_H__
@@ -32,8 +35,10 @@
     extern "C" {
 #endif
 
+/************************* Interface Definitions Start ************************/
+
 /* Fake one func with anther mock. */
-#define FAKE_ON(func, mock) do {                    \
+#define FAKE_ON(func, mock)     do {                \
     SFakeConfigParam configParam;                   \
     configParam.configType = EFakeConfigType_On;    \
     configParam.funcAddr   = func;                  \
@@ -42,40 +47,38 @@
     configParam.mockName   = #mock;                 \
     configParam.sourceFile = __FILE__;              \
     configParam.sourceLine = __LINE__;              \
-    FakeConfig(&configParam);                       \
+    Fake_Config(&configParam);                      \
 } while (0)
 
 /* Release the faked func. */
-#define FAKE_OFF(func)      do {                    \
+#define FAKE_OFF(func)          do {                \
     SFakeConfigParam configParam;                   \
     configParam.configType = EFakeConfigType_Off;   \
     configParam.funcAddr   = func;                  \
     configParam.funcName   = #func;                 \
-    configParam.mockAddr   = NULL;                  \
-    configParam.mockName   = NULL;                  \
     configParam.sourceFile = __FILE__;              \
     configParam.sourceLine = __LINE__;              \
-    FakeConfig(&configParam);                       \
+    Fake_Config(&configParam);                      \
 } while (0)
 
 /* Reset fake database and release all faked func. */
-#define FAKE_RESET()        do {                    \
+#define FAKE_RESET()            do {                \
     SFakeConfigParam configParam;                   \
     configParam.configType = EFakeConfigType_Reset; \
-    configParam.funcAddr   = NULL;                  \
-    configParam.funcName   = NULL;                  \
-    configParam.mockAddr   = NULL;                  \
-    configParam.mockName   = NULL;                  \
     configParam.sourceFile = __FILE__;              \
     configParam.sourceLine = __LINE__;              \
-    FakeConfig(&configParam);                       \
+    Fake_Config(&configParam);                      \
 } while (0)
 
+/************************* Interface Definitions End **************************/
+
+/************ Types Definitions Start (Use interfaces instead of them) ********/
+
 typedef enum EFakeConfigType {
-    EFakeConfigType_NULL  = 0,
-    EFakeConfigType_On    = 1,
-    EFakeConfigType_Off   = 2,
-    EFakeConfigType_Reset = 3,
+    EFakeConfigType_NULL  = 0,      /* RESERVED, MUST NOT REMOVE */
+    EFakeConfigType_On    = 1,      /* FAKE_ON */
+    EFakeConfigType_Off   = 2,      /* FAKE_OFF */
+    EFakeConfigType_Reset = 3,      /* FAKE_RESET */
     EFakeConfigType_Num   = 4,
 } EFakeConfigType;
 
@@ -86,11 +89,13 @@ typedef struct SFakeConfigParam {
     void            * mockAddr;     /* Addr of the function to fack others. */
     char            * mockName;     /* Name of the function to fack others. */
     char            * sourceFile;   /* File name of config position in source */
-    unsigned int      sourceLine;   /* Line no. of config position int source */
+    unsigned int      sourceLine;   /* Line no. of config position in source */
 } SFakeConfigParam;
 
+/************ Types Definitions End (Use interfaces instead of them) **********/
+
 /* The marco FAKE_XXX is recommend instead of using FakeConfig directly */
-void FakeConfig (SFakeConfigParam * configParamPtr);
+void Fake_Config(SFakeConfigParam * configParamPtr);
 
 #ifdef __cplusplus
 }

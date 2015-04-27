@@ -29,11 +29,12 @@
 
 typedef struct SFakeDataInfo {
     TFakeUInt   size;
-    TFakeU8     msg[FAKE_FLEXIBLE_ARRAY_SIZE];
+    TFakeU8     info[FAKE_FLEXIBLE_ARRAY_SIZE];
 } SFakeDataInfo;
 
 typedef void * SFakeDataHandle;
 
+/* Component Object Method Definitions */
 typedef struct SFakeDatabase {
     SFakeDataHandle (* GetFirstDataHandle) (void);
     SFakeDataHandle (* GetNextDataHandle) (SFakeDataHandle currentDataHandle);
@@ -53,6 +54,7 @@ typedef struct SFakeDatabase {
     void (* FreeDataInfo) (SFakeDataInfo ** dataInfoPtr);
 } SFakeDatabase;
 
+/* Component Object Statement(Singleton Pattern) */
 extern SFakeDatabase gFakeDb;
 
 #ifdef __cplusplus

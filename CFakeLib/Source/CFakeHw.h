@@ -27,16 +27,21 @@
 
 #include "CFakeTypes.h"
 
+/* Component Object Method Definitions */
 typedef struct SFakeHw {
-    TFakeUInt (* GetCodeSize)(void);
+    TFakeUInt (* GetCorruptedCodeSize)(void);
 
-    void (* MakeCode)   (SFakeConfigParam * configParamPtr, TFakeU8 * msgPtr);
-    void (* EnableCode) (SFakeConfigParam * configParamPtr, TFakeU8 * msgPtr);
-    void (* DisableCode)(SFakeConfigParam * configParamPtr, TFakeU8 * msgPtr);
+    void (* MakeCorruptedCode)   (SFakeConfigParam * configParamPtr,
+                                  TFakeU8 * infoPtr);
+    void (* EnableCorruptedCode) (SFakeConfigParam * configParamPtr,
+                                  TFakeU8 * infoPtr);
+    void (* DisableCorruptedCode)(SFakeConfigParam * configParamPtr,
+                                  TFakeU8 * infoPtr);
 
-    TFakeUInt const msgSize;
+    TFakeUInt const infoSize;
 } SFakeHw;
 
+/* Component Object Statement(Singleton Pattern) */
 extern SFakeHw gFakeHw;
 
 #ifdef __cplusplus

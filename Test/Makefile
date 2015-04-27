@@ -26,13 +26,9 @@ CFLAGS += -I"." 			\
           -I"../CFakeLib" 	\
 		  -I"CMockeryLib"	\
 
-LIB := "./CMockeryLib/libcmockery.a"
-
-ifeq ($(OS),Windows_NT)
-LIB += "../CFakeLib/libfake_x86win.a"
-else
-LIB += "../CFakeLib/libfake_x86linux.a"
-endif
+LIB :=
+	"./CMockeryLib/libcmockery.a"	\
+	"../CFakeLib/libfake.a"			\
 
 C_TEST_CODES :=			\
 	Test_Main.c			\

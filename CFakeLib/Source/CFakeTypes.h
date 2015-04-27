@@ -18,7 +18,6 @@
  * @Brief   It provide the type defines for internal use in CFake.
  ******************************************************************************/
 
-
 #ifndef __C_FAKE_TYPES_H__
 #define __C_FAKE_TYPES_H__
 
@@ -31,9 +30,9 @@
 #define FAKE_FLEXIBLE_ARRAY_SIZE    0
 
 #ifdef __GNUC__
-#define FAKE_ATTR(attrs) __attribute__(attrs)
+#   define FAKE_ATTR(attrs) __attribute__(attrs)
 #else
-#define FAKE_ATTR(attrs)
+#   define FAKE_ATTR(attrs)
 #endif
 
 typedef unsigned char       TFakeU8;

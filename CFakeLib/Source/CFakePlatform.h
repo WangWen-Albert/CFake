@@ -27,17 +27,23 @@
 
 #include "CFakeDatabase.h"
 
+/* Component Object Method Definitions */
 typedef struct SFakePlatform {
+    /* Quit current progress after print errors */
     void (* RaiseFatal)(char * format, ...);
 
+    /* Check if config param is valid */
     void (* CheckIn)(SFakeConfigParam * configParamPtr);
 
-    SFakeDataInfo * (* EnableConfig)(SFakeConfigParam * configParamPtr);
+    /* Replace func as mock */
+    SFakeDataInfo * (* EnableMock)(SFakeConfigParam * configParamPtr);
 
-    void (* DisableConfig)(SFakeConfigParam * configParamPtr,
-                           SFakeDataInfo ** dataInfo);
+    /* Recover func from mock */
+    void (* DisableMock)(SFakeConfigParam *  configParamPtr,
+                         SFakeDataInfo    ** dataInfoPtr);
 } SFakePlatform;
 
+/* Component Object Statement(Singleton Pattern) */
 extern SFakePlatform gFakePlatform;
 
 #ifdef __cplusplus

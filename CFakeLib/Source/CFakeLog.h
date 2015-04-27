@@ -36,12 +36,15 @@
 #include <stdarg.h>
 #include "CFakeTypes.h"
 
+/* Compile-Time Checking for format string with args */
 #define FAKE_LOG_ATTR \
     FAKE_ATTR((__format__ (printf, 1, 2)))
 
+/* Compile-Time Checking for format string with args */
 #define FAKE_VLOG_ATTR \
     FAKE_ATTR((__format__ (printf, 1, 0)))
 
+/* Print log level */
 typedef enum EFakeLogLevel {
     EFakeLogLevel_Debug    = 0,
     EFakeLogLevel_Info     = 1,
@@ -50,26 +53,31 @@ typedef enum EFakeLogLevel {
     EFakeLogLevel_Critical = 4,
 } EFakeLogLevel;
 
+/* Print log mode */
 typedef enum EFakeLogMode {
     EFakeLogMode_Stdout     = 0,
     EFakeLogMode_NewFile    = 1,
     EFakeLogMode_AppendFile = 2,
 } EFakeLogMode;
 
-typedef void FAKE_LOG_ATTR  (* TFakeLogApi)  (char * format, ...);
-typedef void FAKE_VLOG_ATTR (* TFakeVLogApi) (char * format, va_list args);
+/* Print API */
+typedef void (* TFakeLogApi)  (char * format, ...) FAKE_LOG_ATTR;
 
+/* Print API with va_list */
+typedef void (* TFakeVLogApi) (char * format, va_list args) FAKE_VLOG_ATTR;
+
+/* Component Object Method Definitions */
 typedef struct SFakeLog {
-    TFakeLogApi  Debug;
-    TFakeLogApi  Info;
-    TFakeLogApi  Warning;
-    TFakeLogApi  Error;
-    TFakeLogApi  Critical;
-    TFakeVLogApi VDebug;
-    TFakeVLogApi VInfo;
-    TFakeVLogApi VWarning;
-    TFakeVLogApi VError;
-    TFakeVLogApi VCritical;
+    TFakeLogApi  Debug;         /* Print in debug level */
+    TFakeLogApi  Info;          /* Print in info level */
+    TFakeLogApi  Warning;       /* Print in warning level */
+    TFakeLogApi  Error;         /* Print in error level */
+    TFakeLogApi  Critical;      /* Print in critical level */
+    TFakeVLogApi VDebug;        /* Print in debug level with va_list */
+    TFakeVLogApi VInfo;         /* Print in info level with va_list */
+    TFakeVLogApi VWarning;      /* Print in warning level with va_list */
+    TFakeVLogApi VError;        /* Print in error level with va_list */
+    TFakeVLogApi VCritical;     /* Print in critical level with va_list */
 
     /*****************************************************
      @Description:
@@ -89,6 +97,7 @@ typedef struct SFakeLog {
     void (* SetMode) (EFakeLogMode logMode, void * modeInfo);
 } SFakeLog;
 
+/* Component Object Statement(Singleton Pattern) */
 extern SFakeLog gFakeLog;
 
 #ifdef __cplusplus

@@ -27,13 +27,18 @@
 
 #include "CFakeTypes.h"
 
+/* Component Object Method Definitions */
 typedef struct SFakeOs {
-    void (* AllocMemoryProtect)(SFakeConfigParam * configParamPtr, TFakeU8 * msgPtr);
-    void (* FreeMemoryProtect)(SFakeConfigParam * configParamPtr, TFakeU8 * msgPtr);
+    void (* AllocMemoryProtect)(SFakeConfigParam * configParamPtr,
+                                TFakeU8          * infoPtr);
 
-    TFakeUInt const msgSize;
+    void (* FreeMemoryProtect)(SFakeConfigParam * configParamPtr,
+                               TFakeU8          * infoPtr);
+
+    TFakeUInt const infoSize;
 } SFakeOs;
 
+/* Component Object Statement(Singleton Pattern) */
 extern SFakeOs gFakeOs;
 
 #ifdef __cplusplus

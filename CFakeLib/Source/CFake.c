@@ -19,119 +19,108 @@
  *
  *          When using FAKE_ON to fake one func with anther mock in your
  *          test case, the mock will be called instead of the faked func.
- *          And the fake could be cancel at the end of the case. 
+ *          And the fake action could be cancel at the end of the case. 
+ *
+ *          In another word, one func could be dynamically replaced as any
+ *          other stub during testing program is running.
  *
  *          You may add this library to an existing unit testing framework
- *          to power your testing ability, e.g. cmockery, CppUnit.
+ *          to power your testing performance, e.g. cmockery, CppUnit.
  ******************************************************************************/
-
-#include <stdio.h>
-#include <assert.h>
 #include "CFakePlatform.h"
 #include "CFakeDatabase.h"
 #include "CFakeLog.h"
 
-typedef void (*TFakeConfigApi) (SFakeConfigParam * configParamPtr);
+#define FAKE_CONFIG_API_NUM     (EFakeConfigType_Num - 1)
+
+typedef void (*TFakeConfigApi)(SFakeConfigParam * configParamPtr);
 
 /* Fake one func with anther mock */
-static void FakeOn (SFakeConfigParam * configParamPtr);
+static void Fake_On(SFakeConfigParam * configParamPtr);
 
 /* Release the faked func */
-static void FakeOff (SFakeConfigParam * configParamPtr);
+static void Fake_Off(SFakeConfigParam * configParamPtr);
 
 /* Release the faked func. */
-static void FakeReset (SFakeConfigParam * configParamPtr);
+static void Fake_Reset(SFakeConfigParam * configParamPtr);
 
-TFakeConfigApi gFakeConfigApi[EFakeConfigType_Num] = {
-    FakeOn,
-    FakeOff,
-    FakeReset,
+/* Config API Assignment */
+TFakeConfigApi gFakeConfigApi[FAKE_CONFIG_API_NUM] = {
+    Fake_On,
+    Fake_Off,
+    Fake_Reset,
 };
 
-/*****************************************************
- @Description:
-   Fake one func with anther mock.
- @Parameter:
-   func : the function which want to be faked.
-   mock : the function which is used to fack others.
- *****************************************************/
-static void FakeOn(SFakeConfigParam * configParamPtr)
+/* Fake one func with anther mock. */
+static void Fake_On(SFakeConfigParam * configParamPtr)
 {
     SFakeDataHandle    dataHandle;
     SFakeDataInfo    * dataInfoPtr;
     SFakeConfigParam   oldParam;
 
-    gFakeLog.Info("Fake On: FUNC<%s, 0x%X>, MOCK<%s, 0x%X>",
+    dataHandle = gFakeDb.GetDataHandle(configParamPtr);
+    if (dataHandle != NULL)
+    {
+        gFakeDb.ReadConfigParam(dataHandle, &oldParam);
+        gFakeLog.Warning("%s(0x%X) is faked by %s(0x%X) yet! "
+                         "Recover now..",
+                         oldParam.funcName,
+                         (TFakeUInt)oldParam.funcAddr,
+                         oldParam.mockName,
+                         (TFakeUInt)oldParam.mockAddr);
+        Fake_Off(&oldParam);
+    }
+
+    gFakeLog.Info("Fake_On: %s(0x%X) => %s(0x%X)",
                   configParamPtr->funcName,
                   (TFakeUInt)configParamPtr->funcAddr,
                   configParamPtr->mockName,
                   (TFakeUInt)configParamPtr->mockAddr);
 
-    dataHandle = gFakeDb.GetDataHandle(configParamPtr);
-    if (dataHandle != NULL)
-    {
-        gFakeDb.ReadConfigParam(dataHandle, &oldParam);
-        gFakeLog.Warning("FUNC<%s, 0x%X> is already faked by MOCK<%s, 0x%X>",
-                         oldParam.funcName,
-                         (TFakeUInt)oldParam.funcAddr,
-                         oldParam.mockName,
-                         (TFakeUInt)oldParam.mockAddr);
-        return;
-    }
-
-    dataInfoPtr = gFakePlatform.EnableConfig(configParamPtr);
+    dataInfoPtr = gFakePlatform.EnableMock(configParamPtr);
     (void)gFakeDb.PushDataInfo(configParamPtr, dataInfoPtr);
 }
 
-/*****************************************************
- @Description:
-   Release the faked func.
- @Parameter:
-   func : the faked function address
- *****************************************************/
-static void FakeOff(SFakeConfigParam * configParamPtr)
+/* Release the faked func. */
+static void Fake_Off(SFakeConfigParam * configParamPtr)
 {
     SFakeDataHandle   dataHandle;
     SFakeDataInfo   * dataInfoPtr;
 
-    gFakeLog.Info("Fake Off: Func<%s, 0x%X>",
+    gFakeLog.Info("Fake_Off: Recover %s(0x%X)",
                   configParamPtr->funcName,
                   (TFakeUInt)configParamPtr->funcAddr);
 
     dataHandle = gFakeDb.GetDataHandle(configParamPtr);
     if (dataHandle == NULL)
     {
-        gFakeLog.Warning("FUNC<%s, 0x%X> is not faked by any MOCK",
+        gFakeLog.Warning("%s(0x%X) isn't faked by any func!",
                          configParamPtr->funcName,
                          (TFakeUInt)configParamPtr->funcAddr);
         return;
     }
 
     dataInfoPtr = gFakeDb.PopDataInfo(dataHandle);
-    gFakePlatform.DisableConfig(configParamPtr, &dataInfoPtr);
+    gFakePlatform.DisableMock(configParamPtr, &dataInfoPtr);
 }
 
-/*****************************************************
- @Description:
-   Reset fake database and release all faked func.
- @Parameter:
-   N/A
- *****************************************************/
-static void FakeReset(SFakeConfigParam * configParamPtr)
+/* Reset fake database and release all faked func. */
+static void Fake_Reset(SFakeConfigParam * configParamPtr)
 {
     SFakeDataHandle    dataHandle;
     SFakeConfigParam   oldParam;
 
-    gFakeLog.Info("Fake Rest now..");
+    gFakeLog.Info("Fake_Rest is running now..");
 
     while ((dataHandle = gFakeDb.GetFirstDataHandle()) != NULL)
     {
         gFakeDb.ReadConfigParam(dataHandle, &oldParam);
-        FakeOff(&oldParam);
+        Fake_Off(&oldParam);
     }
 }
 
-void FakeConfig(SFakeConfigParam * configParamPtr)
+/* Dispatch config param to trusted API according to config type */
+void Fake_Config(SFakeConfigParam * configParamPtr)
 {
     TFakeConfigApi configApi;
 

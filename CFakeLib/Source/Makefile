@@ -18,43 +18,50 @@
 # This script is used to make static library for CFakeLib
 ###########################################################################
 
-X86Win   := ../libfake_x86win.a
-X86Linux := ../libfake_x86linux.a
+all: help
 
-C_CODES_COMMON		:=	\
-	CFake.c				\
-	CFakePlatform.c		\
-	CFakeDatabase.c		\
-	CFakeLog.c			\
+## Build all CC&S and DSPHWAPI targets
+.PHONY: x86win32
+x86win32:
+	$(MAKE) -f CFakeBuild.mk FAKE_HW=x86 FAKE_OS=win FAKE_SYS=32
 
-C_CODES_X86_WIN		:=	\
-	$(C_CODES_COMMON)	\
-	CFakeOsWin.c		\
-	CFakeHwX86.c		\
+.PHONY: x86win64
+x86win64:
+	$(MAKE) -f CFakeBuild.mk FAKE_HW=x86 FAKE_OS=win FAKE_SYS=64
 
-C_OBJ_X86_WIN   	:=	$(patsubst %.c, %.o, ${C_CODES_X86_WIN})
+.PHONY: x86linux32
+x86linux32:
+	$(MAKE) -f CFakeBuild.mk FAKE_HW=x86 FAKE_OS=linux FAKE_SYS=32
 
-C_CODES_X86_LINUX	:=	\
-	$(C_CODES_COMMON)	\
-	CFakeOsLinux.c		\
-	CFakeHwX86.c		\
+.PHONY: x86linux64
+x86linux64:
+	$(MAKE) -f CFakeBuild.mk FAKE_HW=x86 FAKE_OS=linux FAKE_SYS=64
 
-C_OBJ_X86_Linux		:= $(patsubst %.c, %.o, ${C_CODES_X86_LINUX})
-
-CFLAGS += -Wall -O -g -I".."
-
-all: $(X86Win) $(X86Linux)
-	rm *.o
-
-$(X86Win): $(C_OBJ_X86_WIN)
-	ar cru $@ $^
-
-$(X86Linux): $(C_OBJ_X86_Linux)
-	ar cru $@ $^
-
-%.o: %.c
-	$(CC) -c $? $(INCLUDE) $(CFLAGS)
-
-.PHONY : clean
+.PHONY: clean
 clean:
-	rm -f ${X86Win} $(X86Linux) $(C_OBJ_X86_WIN) $(C_OBJ_X86_Linux)
+	$(RM) ../libfake.a *.o *.d
+
+## help
+.PHONY: help
+help:
+	@echo ""
+	@echo "######################## CFake GNU makefile ############################"
+	@echo "# Usage:                                                               #"
+	@echo "#  make [help] | [clean] | [<target>]                                  #"
+	@echo "#                                                                      #"
+	@echo "# help:                                                                #"
+	@echo "#  Help from this Makefile                                             #"
+	@echo "#                                                                      #"
+	@echo "# Clean:                                                               #"
+	@echo "#  clean             Clean objects, depend files, etc                  #"
+	@echo "#                                                                      #"
+	@echo "# Targets (Unit Tests):                                                #"
+	@echo "#  x86win32          Make static library for windows 32 system         #"
+	@echo "#                    on x86 hw architecture                            #"
+	@echo "#  x86win64          Make static library for windows 64 system         #"
+	@echo "#                    on x86 hw architecture                            #"
+	@echo "#  x86linux32        Make static library for linux 32 system           #"
+	@echo "#                    on x86 hw architecture                            #"
+	@echo "#  x86linux64        Make static library for linux 32 system           #"
+	@echo "#                    on x86 hw architecture                            #"
+	@echo "########################################################################"

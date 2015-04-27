@@ -3,9 +3,7 @@
 #include "CFakeLog.h"
 #include "CFakePlatform.h"
 
-#define FAKE_LOG_BUFFER 512
-
-static EFakeLogLevel gFakeLogLevel  = EFakeLogLevel_Debug;
+static EFakeLogLevel gFakeLogLevel  = EFakeLogLevel_Warning;
 static EFakeLogMode  gFakeLogMode   = EFakeLogMode_Stdout;
 static FILE *        gFakeLogStream = NULL;
 
@@ -26,6 +24,9 @@ static void FakeLog_OutputLogs(char * format, char * header, va_list args)
     }
 }
 
+/************************* Method Definitions Start ***************************/
+
+/* Print in debug level */
 static void FakeLog_PrintDebug(char * format, ...)
 {
     assert (format != NULL);
@@ -38,6 +39,7 @@ static void FakeLog_PrintDebug(char * format, ...)
     }
 }
 
+/* Print in info level */
 static void FakeLog_PrintInfo(char * format, ...)
 {
     assert (format != NULL);
@@ -50,6 +52,7 @@ static void FakeLog_PrintInfo(char * format, ...)
     }
 }
 
+/* Print in warning level */
 static void FakeLog_PrintWarning(char * format, ...)
 {
     assert (format != NULL);
@@ -62,6 +65,7 @@ static void FakeLog_PrintWarning(char * format, ...)
     }
 }
 
+/* Print in error level */
 static void FakeLog_PrintError(char * format, ...)
 {
     assert (format != NULL);
@@ -74,6 +78,7 @@ static void FakeLog_PrintError(char * format, ...)
     }
 }
 
+/* Print in critical level */
 static void FakeLog_PrintCritical(char * format, ...)
 {
     assert (format != NULL);
@@ -86,6 +91,7 @@ static void FakeLog_PrintCritical(char * format, ...)
     }
 }
 
+/* Print in debug level with va_list */
 static void FakeLog_VPrintDebug(char * format, va_list args)
 {
     assert (format != NULL);
@@ -98,6 +104,7 @@ static void FakeLog_VPrintDebug(char * format, va_list args)
     }
 }
 
+/* Print in info level with va_list */
 static void FakeLog_VPrintInfo(char * format, va_list args)
 {
     assert (format != NULL);
@@ -110,6 +117,7 @@ static void FakeLog_VPrintInfo(char * format, va_list args)
     }
 }
 
+/* Print in warning level with va_list */
 static void FakeLog_VPrintWarning(char * format, va_list args)
 {
     assert (format != NULL);
@@ -122,6 +130,7 @@ static void FakeLog_VPrintWarning(char * format, va_list args)
     }
 }
 
+/* Print in error level with va_list */
 static void FakeLog_VPrintError(char * format, va_list args)
 {
     assert (format != NULL);
@@ -134,6 +143,7 @@ static void FakeLog_VPrintError(char * format, va_list args)
     }
 }
 
+/* Print in critical level with va_list */
 static void FakeLog_VPrintCritical(char * format, va_list args)
 {
     assert (format != NULL);
@@ -146,13 +156,8 @@ static void FakeLog_VPrintCritical(char * format, va_list args)
     }
 }
 
-/*****************************************************
- @Description:
-   Custom log output level, Default is EFakeLogLevel_Info
- @Parameter:
-   logLevel: new log output level
- *****************************************************/
-void FakeLog_SetLevel(EFakeLogLevel logLevel)
+/* Custom log output level, Default is EFakeLogLevel_Warning */
+static void FakeLog_SetLevel(EFakeLogLevel logLevel)
 {
     if (logLevel < EFakeLogLevel_Debug || logLevel > EFakeLogLevel_Critical)
     {
@@ -163,14 +168,8 @@ void FakeLog_SetLevel(EFakeLogLevel logLevel)
     gFakeLogLevel = logLevel;
 }
 
-/*****************************************************
- @Description:
-   Custom log output mode, Default is EFakeLogMode_Stdout
- @Parameter:
-   logLevel: new log output level
-   modeInfo: pointer to filename if using file for output
- *****************************************************/
-void FakeLog_SetMode(EFakeLogMode logMode, void * modeInfo)
+/* Method: Custom log output mode, Default is EFakeLogMode_Stdout */
+static void FakeLog_SetMode(EFakeLogMode logMode, void * modeInfo)
 {
     char * fileMode;
     FILE * fileHandler;
@@ -218,6 +217,9 @@ void FakeLog_SetMode(EFakeLogMode logMode, void * modeInfo)
     }
 }
 
+/************************* Method Definitions End *****************************/
+
+/* Component Object Definition(Singleton Pattern) */
 SFakeLog gFakeLog = {
     FakeLog_PrintDebug,
     FakeLog_PrintInfo,

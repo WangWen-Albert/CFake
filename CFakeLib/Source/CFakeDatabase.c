@@ -17,7 +17,6 @@
  * @File    CFakeDatabase.c
  * @Brief   It provide database for internal use in CFake.
  ******************************************************************************/
-
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
@@ -28,25 +27,16 @@
 #define FAKE_DATABASE_INIT_BYTE     0xAA
 
 typedef struct SFakeDataItem {
-    SFakeConfigParam       configParam;
-    SFakeDataInfo        * dataInfoPtr;
     struct SFakeDataItem * prev;
     struct SFakeDataItem * next;
+    SFakeDataInfo        * dataInfoPtr;
+    SFakeConfigParam       configParam;
 } SFakeDataItem;
 
 static SFakeDataItem gFakeDbDataItemList = {
-    {
-        EFakeConfigType_NULL,   /* configParam.configType */
-        NULL,                   /* configParam.funcAddr */
-        NULL,                   /* configParam.funcName */
-        NULL,                   /* configParam.mockAddr */
-        NULL,                   /* configParam.mockName */
-        NULL,                   /* configParam.sourceFile */
-        0x0,                    /* configParam.sourceLine */
-    },
-    NULL,                       /* dataInfoPtr */
     &gFakeDbDataItemList,       /* prev */
     &gFakeDbDataItemList,       /* next */
+    NULL,                       /* dataInfoPtr */
 };
 
 static inline EFakeBool FakeDb_IsEmpty(void)
@@ -65,6 +55,8 @@ static SFakeDataHandle FakeDb_GetFirstDataHandle(void)
 
     return dataHandle;
 }
+
+/************************* Method Definitions Start ***************************/
 
 static SFakeDataHandle 
 FakeDb_GetNextDataHandle(SFakeDataHandle currentDataHandle)
@@ -95,11 +87,6 @@ static SFakeDataHandle FakeDb_GetDataHandle(SFakeConfigParam * configParamPtr)
         while (dataHandle != NULL)
         {
             gFakeDb.ReadConfigParam(dataHandle, &oldParam);
-            gFakeLog.Debug("ReadConfigParam: %s 0x%x  %s 0x%x",
-                           oldParam.funcName, 
-                           (TFakeUInt)oldParam.funcAddr,
-                           configParamPtr->funcName,
-                           (TFakeUInt)configParamPtr->funcAddr);
             if (oldParam.funcAddr == configParamPtr->funcAddr)
             {
                 break;
@@ -119,12 +106,6 @@ static SFakeDataHandle FakeDb_PushDataInfo(SFakeConfigParam * configParamPtr,
     assert (dataInfoPtr    != NULL);
     {
         SFakeDataItem * dataItem = NULL;
-
-        gFakeLog.Debug("FakeDb_PushDataInfo: "
-                       "funcName: %s, funcAddr:0x%X, dataInfoPtr:0x%X",
-                       configParamPtr->funcName,
-                       (TFakeUInt)configParamPtr->funcAddr,
-                       (TFakeUInt)dataInfoPtr);
 
         dataItem = (SFakeDataItem *)malloc(sizeof(SFakeDataItem));
         if (dataItem != NULL)
@@ -166,9 +147,6 @@ static SFakeDataInfo * FakeDb_PopDataInfo(SFakeDataHandle dataHandle)
             free(dataItem);
         }
     }
-
-    gFakeLog.Debug("FakeDb_PopDataInfo: dataInfoPtr:0x%X",
-                   (TFakeUInt)dataInfoPtr);
 
     return dataInfoPtr;
 }
@@ -215,7 +193,7 @@ static SFakeDataInfo * FakeDb_AllocDataInfo(TFakeUInt size)
                            size);
         }
         dataInfoPtr->size = size;
-        memset(dataInfoPtr->msg, FAKE_DATABASE_INIT_BYTE, size);
+        memset(dataInfoPtr->info, FAKE_DATABASE_INIT_BYTE, size);
 
         return dataInfoPtr;
     }
@@ -225,12 +203,14 @@ static void FakeDb_FreeDataInfo(SFakeDataInfo ** dataInfoPtr)
 {
     if (dataInfoPtr != NULL)
     {
-        gFakeLog.Debug("FakeDb_AllocDataInfo 0x%X", (TFakeUInt)dataInfoPtr);
         free(*dataInfoPtr);
         *dataInfoPtr = NULL;
     }
 }
 
+/************************* Method Definitions End *****************************/
+
+/* Component Object Definition(Singleton Pattern) */
 SFakeDatabase gFakeDb = {
     FakeDb_GetFirstDataHandle,
     FakeDb_GetNextDataHandle,
