@@ -1,11 +1,13 @@
 # CFake
-A fast and simple solution to do unit testing
+A fast and simple solution to do unit testing for C/C++ program.
 
 ## Purpose
 
 When using FAKE_ON to fake one func with anther mock in your
 test case, the mock will be called instead of the faked func.
-And the fake action could be cancel at the end of the case. 
+And the fake action could be cancel by FAKE_OFF or FAKE_RESET
+at the end of the case. 
+
 In another word, one func could be dynamically replaced as any
 other stub during testing program is running.
 
@@ -14,9 +16,9 @@ to power your testing performance, e.g. [cmockery](https://code.google.com/p/cmo
 
 ## API
 ```c
-FAKE_ON(func, mock) //Macro API: Fake one func with anther mock
-FAKE_OFF(func)      //Macro API: Release the faked func
-FAKE_RESET()        //Macro API: Reset fake database and release all faked func.
+#define FAKE_ON(func, mock) ......  //Macro API: Fake one func with anther mock
+#define FAKE_OFF(func)      ......  //Macro API: Release the faked func
+#define FAKE_RESET()        ......  //Macro API: Reset fake database and release all faked func.
 ```
 
 ## Examples:
@@ -66,3 +68,12 @@ void Test_LifeNext_Success(void **state)
     FAKE_RESET();
 }
 ```
+
+## Build the library
+
+The following option is used for different system.
+
+* 'x86win32' &ndash; Make static library for windows 32 system on x86 hw architecture;
+* 'x86win64' &ndash; Make static library for windows 64 system on x86 hw architecture;
+* 'x86linux32' &ndash; Make static library for linux 32 system on x86 hw architecture;
+* 'x86linux64' &ndash; Make static library for linux 32 system on x86 hw architecture;
