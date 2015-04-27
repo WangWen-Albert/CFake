@@ -27,6 +27,7 @@
 
 #include "CFakeTypes.h"
 
+/* Fake internal data info, which is used to restore fake action */
 typedef struct SFakeDataInfo {
     TFakeUInt   size;
     TFakeU8     info[FAKE_FLEXIBLE_ARRAY_SIZE];
@@ -36,21 +37,33 @@ typedef void * SFakeDataHandle;
 
 /* Component Object Method Definitions */
 typedef struct SFakeDatabase {
+    /* Get first handle in database, for visiting hanlde one by one */
     SFakeDataHandle (* GetFirstDataHandle) (void);
+
+    /* Get next handle by current one, for visiting hanlde one by one */
     SFakeDataHandle (* GetNextDataHandle) (SFakeDataHandle currentDataHandle);
+
+    /* Get handle by config param, Note: key is funcAddr! */
     SFakeDataHandle (* GetDataHandle) (SFakeConfigParam * configParamPtr);
 
+    /* Push data info with config param, Note: it's saved into database! */
     SFakeDataHandle (* PushDataInfo) (SFakeConfigParam * configParamPtr,
                                       SFakeDataInfo    * dateInfo);
 
+    /* Pop data info by handle, Note: it's removed from database! */
     SFakeDataInfo * (* PopDataInfo) (SFakeDataHandle dataHandle);
 
+    /* Get data info by handle, Note: it's still saved in database! */
     SFakeDataInfo * (* GetDataInfo) (SFakeDataHandle dataHandle);
 
+    /* Read config param saved in database by handle */
     void (* ReadConfigParam) (SFakeDataHandle    dataHandle,
                               SFakeConfigParam * configParamPtr);
 
+    /* Alloc memory for data info, which is used to restore fake action */
     SFakeDataInfo * (* AllocDataInfo) (TFakeUInt size);
+
+    /* free memory for data info, which is used to restore fake action */
     void (* FreeDataInfo) (SFakeDataInfo ** dataInfoPtr);
 } SFakeDatabase;
 

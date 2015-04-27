@@ -14,15 +14,8 @@
  * limitations under the License.
  */
 /******************************************************************************
- * @File    CFakePlatform.h
- * @Brief   It provide a fast and simple solution to do unit testing.
- *
- *          When using FAKE_ON to fake one func with anther mock in your
- *          test case, the mock will be called instead of the faked func.
- *          And the fake could be cancel at the end of the case. 
- *
- *          You may add this library to an existing unit testing framework
- *          to power your testing ability, e.g. cmockery, CppUnit.
+ * @File    CFakeLog.h
+ * @Brief   It provide log related interface for internal use in CFake.
  ******************************************************************************/
 
 #ifndef __C_FAKE_LOG_H__

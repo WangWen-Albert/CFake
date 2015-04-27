@@ -29,9 +29,11 @@
 
 /* Component Object Method Definitions */
 typedef struct SFakeOs {
+    /* Alloc memory protection(Before modify code section of fake action) */
     void (* AllocMemoryProtect)(SFakeConfigParam * configParamPtr,
                                 TFakeU8          * infoPtr);
 
+    /* Free memory protection(After modify code section of fake action) */
     void (* FreeMemoryProtect)(SFakeConfigParam * configParamPtr,
                                TFakeU8          * infoPtr);
 
@@ -46,5 +48,4 @@ extern SFakeOs gFakeOs;
 #endif
 
 #endif /* __C_FAKE_OS_H__ */
-
 

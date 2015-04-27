@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /******************************************************************************
- * @File    Test_GameOfLife.c
+ * @File    Test_GameOfLife.h
  * @Brief   Unit Testing for GameOfLife.c
  ******************************************************************************/
 

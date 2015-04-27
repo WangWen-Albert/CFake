@@ -37,7 +37,7 @@
 
 /************************* Interface Definitions Start ************************/
 
-/* Fake one func with anther mock. */
+/* API: Fake one func with anther mock. */
 #define FAKE_ON(func, mock)     do {                \
     SFakeConfigParam configParam;                   \
     configParam.configType = EFakeConfigType_On;    \
@@ -50,7 +50,7 @@
     Fake_Config(&configParam);                      \
 } while (0)
 
-/* Release the faked func. */
+/* API: Release the faked func. */
 #define FAKE_OFF(func)          do {                \
     SFakeConfigParam configParam;                   \
     configParam.configType = EFakeConfigType_Off;   \
@@ -61,7 +61,7 @@
     Fake_Config(&configParam);                      \
 } while (0)
 
-/* Reset fake database and release all faked func. */
+/* API: Reset fake database and release all faked func. */
 #define FAKE_RESET()            do {                \
     SFakeConfigParam configParam;                   \
     configParam.configType = EFakeConfigType_Reset; \
@@ -94,7 +94,7 @@ typedef struct SFakeConfigParam {
 
 /************ Types Definitions End (Use interfaces instead of them) **********/
 
-/* The marco FAKE_XXX is recommend instead of using FakeConfig directly */
+/* NON-API: Marco FAKE_XXX is recommend instead of using FakeConfig directly */
 void Fake_Config(SFakeConfigParam * configParamPtr);
 
 #ifdef __cplusplus

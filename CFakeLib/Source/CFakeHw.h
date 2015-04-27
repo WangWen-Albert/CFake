@@ -29,15 +29,22 @@
 
 /* Component Object Method Definitions */
 typedef struct SFakeHw {
+    /* Get corrupted code(i.e. trampoline asm code) size for fake action */
     TFakeUInt (* GetCorruptedCodeSize)(void);
 
+    /* Make corrupted code(i.e. trampoline asm code) for fake action */
     void (* MakeCorruptedCode)   (SFakeConfigParam * configParamPtr,
                                   TFakeU8 * infoPtr);
+
+    /* Enable corrupted code(i.e. trampoline asm code) for fake action */
     void (* EnableCorruptedCode) (SFakeConfigParam * configParamPtr,
                                   TFakeU8 * infoPtr);
+
+    /* Disable corrupted code(i.e. trampoline asm code) for fake action */
     void (* DisableCorruptedCode)(SFakeConfigParam * configParamPtr,
                                   TFakeU8 * infoPtr);
 
+    /* Corrupted code(i.e. trampoline asm code) info size saved into database */
     TFakeUInt const infoSize;
 } SFakeHw;
 

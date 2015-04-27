@@ -1,3 +1,24 @@
+/*
+ * Copyright 2015 Nokia
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/******************************************************************************
+ * @File    CFakeLog.c
+ * @Brief   It provide log related interface for internal use in CFake.
+ ******************************************************************************/
+
+#include <stdio.h>
 #include <stdarg.h>
 #include <assert.h>
 #include "CFakeLog.h"
@@ -18,7 +39,7 @@ static void FakeLog_OutputLogs(char * format, char * header, va_list args)
     }
     else
     {
-        vfprintf(gFakeLogStream, "%s", header);
+        fprintf(gFakeLogStream, "%s", header);
         vfprintf(gFakeLogStream, format, args);
         fprintf(gFakeLogStream, "\n");
     }
@@ -26,7 +47,7 @@ static void FakeLog_OutputLogs(char * format, char * header, va_list args)
 
 /************************* Method Definitions Start ***************************/
 
-/* Print in debug level */
+/* Method: Print in debug level */
 static void FakeLog_PrintDebug(char * format, ...)
 {
     assert (format != NULL);
@@ -39,7 +60,7 @@ static void FakeLog_PrintDebug(char * format, ...)
     }
 }
 
-/* Print in info level */
+/* Method: Print in info level */
 static void FakeLog_PrintInfo(char * format, ...)
 {
     assert (format != NULL);
@@ -52,7 +73,7 @@ static void FakeLog_PrintInfo(char * format, ...)
     }
 }
 
-/* Print in warning level */
+/* Method: Print in warning level */
 static void FakeLog_PrintWarning(char * format, ...)
 {
     assert (format != NULL);
@@ -65,7 +86,7 @@ static void FakeLog_PrintWarning(char * format, ...)
     }
 }
 
-/* Print in error level */
+/* Method: Print in error level */
 static void FakeLog_PrintError(char * format, ...)
 {
     assert (format != NULL);
@@ -78,7 +99,7 @@ static void FakeLog_PrintError(char * format, ...)
     }
 }
 
-/* Print in critical level */
+/* Method: Print in critical level */
 static void FakeLog_PrintCritical(char * format, ...)
 {
     assert (format != NULL);
@@ -91,7 +112,7 @@ static void FakeLog_PrintCritical(char * format, ...)
     }
 }
 
-/* Print in debug level with va_list */
+/* Method: Print in debug level with va_list */
 static void FakeLog_VPrintDebug(char * format, va_list args)
 {
     assert (format != NULL);
@@ -117,7 +138,7 @@ static void FakeLog_VPrintInfo(char * format, va_list args)
     }
 }
 
-/* Print in warning level with va_list */
+/* Method: Print in warning level with va_list */
 static void FakeLog_VPrintWarning(char * format, va_list args)
 {
     assert (format != NULL);
@@ -130,7 +151,7 @@ static void FakeLog_VPrintWarning(char * format, va_list args)
     }
 }
 
-/* Print in error level with va_list */
+/* Method: Print in error level with va_list */
 static void FakeLog_VPrintError(char * format, va_list args)
 {
     assert (format != NULL);
@@ -143,7 +164,7 @@ static void FakeLog_VPrintError(char * format, va_list args)
     }
 }
 
-/* Print in critical level with va_list */
+/* Method: Print in critical level with va_list */
 static void FakeLog_VPrintCritical(char * format, va_list args)
 {
     assert (format != NULL);
@@ -156,13 +177,13 @@ static void FakeLog_VPrintCritical(char * format, va_list args)
     }
 }
 
-/* Custom log output level, Default is EFakeLogLevel_Warning */
+/* Method: Custom log output level, Default is EFakeLogLevel_Warning */
 static void FakeLog_SetLevel(EFakeLogLevel logLevel)
 {
     if (logLevel < EFakeLogLevel_Debug || logLevel > EFakeLogLevel_Critical)
     {
         gFakePlatform.RaiseFatal("Invalid logLevel to set CFake, logLevel: %d",
-                                  logLevel);
+                                 logLevel);
     }
 
     gFakeLogLevel = logLevel;
@@ -177,7 +198,7 @@ static void FakeLog_SetMode(EFakeLogMode logMode, void * modeInfo)
     if (logMode < EFakeLogMode_Stdout || logMode > EFakeLogMode_AppendFile)
     {
         gFakePlatform.RaiseFatal("Invalid logMode to set CFake, logMode: %d",
-                             logMode);
+                                 logMode);
     }
 
     if (modeInfo == NULL)
@@ -203,8 +224,8 @@ static void FakeLog_SetMode(EFakeLogMode logMode, void * modeInfo)
         fileHandler = fopen((char *)modeInfo, fileMode);
         if (fileHandler != NULL)
         {
-            gFakePlatform.RaiseFatal("Cannot open log file for CFake,"
-                                     " filename: %s",
+            gFakePlatform.RaiseFatal("Cannot open log file for CFake, "
+                                     "filename: %s",
                                      (char *)modeInfo);
         }
 
@@ -221,17 +242,17 @@ static void FakeLog_SetMode(EFakeLogMode logMode, void * modeInfo)
 
 /* Component Object Definition(Singleton Pattern) */
 SFakeLog gFakeLog = {
-    FakeLog_PrintDebug,
-    FakeLog_PrintInfo,
-    FakeLog_PrintWarning,
-    FakeLog_PrintError,
-    FakeLog_PrintCritical,
-    FakeLog_VPrintDebug,
-    FakeLog_VPrintInfo,
-    FakeLog_VPrintWarning,
-    FakeLog_VPrintError,
-    FakeLog_VPrintCritical,
-    FakeLog_SetLevel,
-    FakeLog_SetMode,
+    FakeLog_PrintDebug,         /* Method: Debug     */
+    FakeLog_PrintInfo,          /* Method: Info      */
+    FakeLog_PrintWarning,       /* Method: Warning   */
+    FakeLog_PrintError,         /* Method: Error     */
+    FakeLog_PrintCritical,      /* Method: Critical  */
+    FakeLog_VPrintDebug,        /* Method: VDebug    */
+    FakeLog_VPrintInfo,         /* Method: VInfo     */
+    FakeLog_VPrintWarning,      /* Method: VWarning  */
+    FakeLog_VPrintError,        /* Method: VError    */
+    FakeLog_VPrintCritical,     /* Method: VCritical */
+    FakeLog_SetLevel,           /* Method: SetLevel  */
+    FakeLog_SetMode,            /* Method: SetMode   */
 };
 

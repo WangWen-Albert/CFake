@@ -17,6 +17,7 @@
  * @File    CFakeDatabase.c
  * @Brief   It provide database for internal use in CFake.
  ******************************************************************************/
+
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
@@ -24,6 +25,7 @@
 #include "CFakeDatabase.h"
 #include "CFakeLog.h"
 
+/* Initialized value for data info */
 #define FAKE_DATABASE_INIT_BYTE     0xAA
 
 typedef struct SFakeDataItem {
@@ -44,6 +46,27 @@ static inline EFakeBool FakeDb_IsEmpty(void)
     return gFakeDbDataItemList.next == &gFakeDbDataItemList;
 }
 
+static inline void FakeDb_PushDataItem(SFakeDataItem * dataItem)
+{
+    dataItem->next = gFakeDbDataItemList.next;
+    dataItem->prev = &gFakeDbDataItemList;
+    gFakeDbDataItemList.next->prev = dataItem;
+    gFakeDbDataItemList.next       = dataItem;
+}
+
+static inline void FakeDb_PopDataItem(SFakeDataItem * dataItem)
+{
+    assert (dataItem->next != NULL);
+    assert (dataItem->prev != NULL);
+    {
+        dataItem->next->prev = dataItem->prev;
+        dataItem->prev->next = dataItem->next;
+    }
+}
+
+/************************* Method Definitions Start ***************************/
+
+/* Method: Get first handle in database, for visiting hanlde one by one */
 static SFakeDataHandle FakeDb_GetFirstDataHandle(void)
 {
     SFakeDataHandle dataHandle = NULL;
@@ -56,8 +79,7 @@ static SFakeDataHandle FakeDb_GetFirstDataHandle(void)
     return dataHandle;
 }
 
-/************************* Method Definitions Start ***************************/
-
+/* Method: Get next handle by current one, for visiting hanlde one by one */
 static SFakeDataHandle 
 FakeDb_GetNextDataHandle(SFakeDataHandle currentDataHandle)
 {
@@ -76,6 +98,7 @@ FakeDb_GetNextDataHandle(SFakeDataHandle currentDataHandle)
     return dataHandle;
 }
 
+/* Method: Get handle by config param, Note: key is funcAddr! */
 static SFakeDataHandle FakeDb_GetDataHandle(SFakeConfigParam * configParamPtr)
 {
     assert (configParamPtr != NULL);
@@ -99,6 +122,7 @@ static SFakeDataHandle FakeDb_GetDataHandle(SFakeConfigParam * configParamPtr)
     }
 }
 
+/* Method: Push data info with config param, Note: it's saved into database! */
 static SFakeDataHandle FakeDb_PushDataInfo(SFakeConfigParam * configParamPtr,
                                            SFakeDataInfo    * dataInfoPtr)
 {
@@ -112,23 +136,20 @@ static SFakeDataHandle FakeDb_PushDataInfo(SFakeConfigParam * configParamPtr,
         {
             dataItem->configParam = *configParamPtr;
             dataItem->dataInfoPtr = dataInfoPtr;
-
-            dataItem->next = gFakeDbDataItemList.next;
-            dataItem->prev = &gFakeDbDataItemList;
-            gFakeDbDataItemList.next->prev = dataItem;
-            gFakeDbDataItemList.next       = dataItem;   
+            FakeDb_PushDataItem(dataItem);
         }
         else
         {
              gFakeLog.Error("Memory not enough for SFakeDataItem "
                             "size: %d!",
-                            sizeof(SFakeDataItem));
+                            (int)sizeof(SFakeDataItem));
         }
 
         return (SFakeDataItem *)dataItem;
     }
 }
 
+/* Method: Pop data info by handle, Note: it's removed from database! */
 static SFakeDataInfo * FakeDb_PopDataInfo(SFakeDataHandle dataHandle)
 {
     SFakeDataInfo * dataInfoPtr = NULL;
@@ -140,10 +161,7 @@ static SFakeDataInfo * FakeDb_PopDataInfo(SFakeDataHandle dataHandle)
         if (dataItem != &gFakeDbDataItemList)
         {
             dataInfoPtr = dataItem->dataInfoPtr;
-
-            dataItem->next->prev = dataItem->prev;
-            dataItem->prev->next = dataItem->next;
-
+            FakeDb_PopDataItem(dataItem);
             free(dataItem);
         }
     }
@@ -151,6 +169,7 @@ static SFakeDataInfo * FakeDb_PopDataInfo(SFakeDataHandle dataHandle)
     return dataInfoPtr;
 }
 
+/* Method: Get data info by handle, Note: it's still saved in database! */
 static SFakeDataInfo * FakeDb_GetDataInfo(SFakeDataHandle dataHandle)
 {
     SFakeDataInfo * dataInfoPtr = NULL;
@@ -165,6 +184,7 @@ static SFakeDataInfo * FakeDb_GetDataInfo(SFakeDataHandle dataHandle)
     return dataInfoPtr;
 }
 
+/* Method: Read config param saved in database by handle */
 static void FakeDb_ReadConfigParam(SFakeDataHandle    dataHandle,
                                    SFakeConfigParam * configParamPtr)
 {
@@ -180,6 +200,7 @@ static void FakeDb_ReadConfigParam(SFakeDataHandle    dataHandle,
     }
 }
 
+/* Method: Alloc memory for data info, which is used to restore fake action */
 static SFakeDataInfo * FakeDb_AllocDataInfo(TFakeUInt size)
 {
     assert (size > 0);
@@ -199,6 +220,7 @@ static SFakeDataInfo * FakeDb_AllocDataInfo(TFakeUInt size)
     }
 }
 
+/* Method: Free memory for data info, which is used to restore fake action */
 static void FakeDb_FreeDataInfo(SFakeDataInfo ** dataInfoPtr)
 {
     if (dataInfoPtr != NULL)
@@ -212,14 +234,14 @@ static void FakeDb_FreeDataInfo(SFakeDataInfo ** dataInfoPtr)
 
 /* Component Object Definition(Singleton Pattern) */
 SFakeDatabase gFakeDb = {
-    FakeDb_GetFirstDataHandle,
-    FakeDb_GetNextDataHandle,
-    FakeDb_GetDataHandle,
-    FakeDb_PushDataInfo,
-    FakeDb_PopDataInfo,
-    FakeDb_GetDataInfo,
-    FakeDb_ReadConfigParam,
-    FakeDb_AllocDataInfo,
-    FakeDb_FreeDataInfo,
+    FakeDb_GetFirstDataHandle,  /* Method: GetFirstDataHandle */
+    FakeDb_GetNextDataHandle,   /* Method: GetNextDataHandle  */
+    FakeDb_GetDataHandle,       /* Method: GetDataHandle      */
+    FakeDb_PushDataInfo,        /* Method: PushDataInfo       */
+    FakeDb_PopDataInfo,         /* Method: PopDataInfo        */
+    FakeDb_GetDataInfo,         /* Method: GetDataInfo        */
+    FakeDb_ReadConfigParam,     /* Method: ReadConfigParam    */
+    FakeDb_AllocDataInfo,       /* Method: AllocDataInfo      */
+    FakeDb_FreeDataInfo,        /* Method: FreeDataInfo       */
 };
 

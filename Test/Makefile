@@ -26,9 +26,8 @@ CFLAGS += -I"." 			\
           -I"../CFakeLib" 	\
 		  -I"CMockeryLib"	\
 
-LIB :=
-	"./CMockeryLib/libcmockery.a"	\
-	"../CFakeLib/libfake.a"			\
+LIB_CMOCKERY :=	"./CMockeryLib/libcmockery.a"
+LIB_FAKE     := "../CFakeLib/libfake.a"
 
 C_TEST_CODES :=			\
 	Test_Main.c			\
@@ -37,13 +36,18 @@ C_TEST_CODES :=			\
 
 C_TEST_OBJ	:=	$(patsubst %.c, %.o, ${C_TEST_CODES})
 
-$(Target): $(C_TEST_OBJ)
-	$(CC) -o $@ $(CFLAGS) $^ $(LIB)
+$(Target): $(C_TEST_OBJ) $(LIB_CMOCKERY)
+	$(CC) -o $@ $(CFLAGS) $^ $(LIB_FAKE)
+
+$(LIB_CMOCKERY):
+	$(MAKE) -C CMockeryLib
 
 %.o: %.c
 	$(CC) -c $? $(INCLUDE) $(CFLAGS)
 
 .PHONY : clean
 clean:
-	rm -f $(Target)  *.o *.gcda *.gcno
+	$(MAKE) -C CMockeryLib clean
+	rm -f $(Target) *.o *.gcda *.gcno
 	rm -rf Report
+	

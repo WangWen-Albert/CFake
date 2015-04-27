@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 /******************************************************************************
- * @File    CFakePlatform.h
+ * @File    CFakePlatform.c
  * @Brief   It isolate the difference of os api and hardware from the bussiness.
  ******************************************************************************/
+
 #include <stdarg.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -56,7 +57,7 @@ static void FakePlatform_CheckInFunc(SFakeConfigParam * configParamPtr)
 
         if (configParamPtr->funcAddr == NULL)
         {
-            gFakePlatform.RaiseFatal("Invalid func, addr: 0x%X, name: %s! "
+            gFakePlatform.RaiseFatal("Invalid func, addr: %p, name: %s! "
                                      "FILE: %s, LINE: %d",
                                      configParamPtr->funcAddr,
                                      configParamPtr->funcName,
@@ -80,7 +81,7 @@ static void FakePlatform_CheckInMock(SFakeConfigParam * configParamPtr)
 
         if (configParamPtr->mockAddr == NULL)
         {
-            gFakePlatform.RaiseFatal("Invalid mock, addr: 0x%X, name: %s! "
+            gFakePlatform.RaiseFatal("Invalid mock, addr: %p, name: %s! "
                                      "FILE: %s, LINE: %d",
                                      configParamPtr->mockAddr,
                                      configParamPtr->mockName,
@@ -90,7 +91,7 @@ static void FakePlatform_CheckInMock(SFakeConfigParam * configParamPtr)
 
         if (configParamPtr->mockAddr == configParamPtr->funcAddr)
         {
-            gFakePlatform.RaiseFatal("Invalid mock, addr: 0x%X, name: %s! "
+            gFakePlatform.RaiseFatal("Invalid mock, addr: %p, name: %s! "
                                      "Cannot fake itself! "
                                      "FILE: %s, LINE: %d",
                                      configParamPtr->mockAddr,
@@ -104,7 +105,7 @@ static void FakePlatform_CheckInMock(SFakeConfigParam * configParamPtr)
 
 /************************* Method Definitions Start ***************************/
 
-/* Quit current progress after print errors */
+/* Method: Quit current progress after print errors */
 static void FakePlatform_RaiseFatal(char * format, ...)
 {
     va_list args;
@@ -116,7 +117,7 @@ static void FakePlatform_RaiseFatal(char * format, ...)
     exit(1);
 }
 
-/* Check if config param is valid */
+/* Method: Check if config param is valid */
 static void FakePlatform_CheckIn(SFakeConfigParam * configParamPtr)
 {
     if (configParamPtr == NULL)
@@ -132,7 +133,7 @@ static void FakePlatform_CheckIn(SFakeConfigParam * configParamPtr)
     FakePlatform_CheckInMock(configParamPtr);
 }
 
-/* Replace func as mock */
+/* Method: Replace func as mock */
 static SFakeDataInfo * 
 FakePlatform_EnableMock(SFakeConfigParam * configParamPtr)
 {
@@ -141,7 +142,7 @@ FakePlatform_EnableMock(SFakeConfigParam * configParamPtr)
         SFakeDataInfo * infoPtr;
         TFakeU8       * osInfoPtr;
         TFakeU8       * hwInfoPtr;
-        int             infoSize = gFakeOs.infoSize + gFakeHw.infoSize;
+        TFakeUInt       infoSize = gFakeOs.infoSize + gFakeHw.infoSize;
 
         infoPtr   = gFakeDb.AllocDataInfo(infoSize);
         osInfoPtr = infoPtr->info;
@@ -156,7 +157,7 @@ FakePlatform_EnableMock(SFakeConfigParam * configParamPtr)
     }
 }
 
-/* Recover func from mock */
+/* Method: Recover func from mock */
 static void FakePlatform_DisableMock(SFakeConfigParam *  configParamPtr,
                                      SFakeDataInfo    ** dataInfoPtr)
 {
@@ -178,9 +179,9 @@ static void FakePlatform_DisableMock(SFakeConfigParam *  configParamPtr,
 
 /* Component Object Definition(Singleton Pattern) */
 SFakePlatform gFakePlatform = {
-    FakePlatform_RaiseFatal,
-    FakePlatform_CheckIn,
-    FakePlatform_EnableMock,
-    FakePlatform_DisableMock,
+    FakePlatform_RaiseFatal,            /* Method: RaiseFatal  */
+    FakePlatform_CheckIn,               /* Method: CheckIn     */
+    FakePlatform_EnableMock,            /* Method: EnableMock  */
+    FakePlatform_DisableMock,           /* Method: DisableMock */
 };
 

@@ -17,6 +17,7 @@
  * @File    Test_GameOfLife.c
  * @Brief   Unit Testing for GameOfLife.c
  ******************************************************************************/
+
 #include "Test_GameOfLife.h"
 #include "CFake.h"
 
@@ -26,17 +27,17 @@
 #undef inline
 #undef main
 
-static int Stub_LifeCopy(SLife * life)
+static SLife * Stub_LifeCopy(SLife * life)
 {
-    int ret;
+    SLife * ret;
 
     printf("<<< Stub_LifeCopy called, ");
 
     check_expected(life);
-    printf("check in-param life: 0x%X, ", (unsigned int)life);
+    printf("check in-param life: %p, ", life);
 
-    ret = (int)mock();
-    printf("return 0x%x >>>\n", ret);
+    ret = (SLife *)mock();
+    printf("return %p >>>\n", ret);
 
     return ret;
 }
@@ -50,16 +51,16 @@ static void Stub_AbortLife(char * format, ...)
 
 static void Stub_LifeUpdate(SLife * newLife, SLife * oldLife)
 {
-    printf("<<< Stub_LifeUpdate called, newLife: 0x%x, oldLife: 0x%x >>>\n",
-           (int)newLife,
-           (int)oldLife);
+    printf("<<< Stub_LifeUpdate called, newLife: %p, oldLife: %p >>>\n",
+           newLife,
+           oldLife);
     check_expected(newLife);
     check_expected(oldLife);
 }
 
 static void inline Stub_LifeFree(SLife * life)
 {
-    printf("<<< Stub_LifeFree called, life: 0x%x >>>\n", (int)life);
+    printf("<<< Stub_LifeFree called, life: %p >>>\n", life);
     check_expected(life);
 }
 

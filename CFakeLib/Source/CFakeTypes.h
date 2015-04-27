@@ -51,4 +51,3 @@ typedef enum EFakeBool {
 
 #endif /* __C_FAKE_TYPES_H__ */
 
-

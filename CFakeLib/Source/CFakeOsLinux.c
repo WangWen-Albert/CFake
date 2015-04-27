@@ -14,38 +14,42 @@
  * limitations under the License.
  */
 /******************************************************************************
- * @File    CFakeOsLinux.h
+ * @File    CFakeOsLinux.c
  * @Brief   It provide linux related interface for internal use in CFake.
  ******************************************************************************/
+
 #include <sys/mman.h>
 #include <unistd.h>
 #include <errno.h>
+#include <string.h>
 #include <assert.h>
 #include "CFakeOs.h"
 #include "CFakeLog.h"
 #include "CFakePlatform.h"
 #include "CFakeHw.h"
 
-static int inline FakeOsLinux_GetPageSize(void)
+static inline TFakeUInt FakeOsLinux_GetPageSize(void)
 {
     return sysconf(_SC_PAGE_SIZE);
 }
 
 /************************* Method Definitions Start ***************************/
 
+/* Method: Alloc memory protection(Before modify code section of fake action) */
 static void
 FakeOsLinux_AllocMemoryProtect(SFakeConfigParam * configParamPtr,
                                TFakeU8 *          infoPtr)
 {
-    int    pageSize  = FakeOsLinux_GetPageSize();
-    void * startAddr = configParamPtr->funcAddr;
-    void * endAddr   = (void *)((TFakeUInt)startAddr + gFakeHw.GetCorruptedCodeSize() - 1);
-    void * pageAddr  = (void *)((TFakeUInt)startAddr & (~(pageSize - 1)));
-    int    pageNum   = ((TFakeUInt)endAddr - (TFakeUInt)pageAddr) / pageSize + 1;
+    TFakeUInt   pageSize  = FakeOsLinux_GetPageSize();
+    void      * startAddr = configParamPtr->funcAddr;
+    void      * endAddr   = startAddr + gFakeHw.GetCorruptedCodeSize();
+    void      * pageAddr  = startAddr - (size_t)startAddr % pageSize;
+    TFakeUInt   pageNum   = (endAddr - pageAddr - 1) / pageSize + 1;
 
-    /* TBD:  how to save previous prot flags? */
+    /* TBD:  how to save previous prot flags?? */
     (void)infoPtr;
 
+    /* Set writable memory protection for the necessary code section */
     if (mprotect(pageAddr,
                  pageNum * pageSize,
                  PROT_READ | PROT_WRITE | PROT_EXEC))
@@ -55,6 +59,7 @@ FakeOsLinux_AllocMemoryProtect(SFakeConfigParam * configParamPtr,
     }
 }
 
+/* Method: Free memory protection(After modify code section of fake action) */
 static void
 FakeOsLinux_FreeMemoryProtect(SFakeConfigParam * configParamPtr,
                               TFakeU8 *          infoPtr)
@@ -69,8 +74,8 @@ FakeOsLinux_FreeMemoryProtect(SFakeConfigParam * configParamPtr,
 
 /* Component Object Definition(Singleton Pattern) */
 SFakeOs gFakeOs = {
-    FakeOsLinux_AllocMemoryProtect,
-    FakeOsLinux_FreeMemoryProtect,
-    0,
+    FakeOsLinux_AllocMemoryProtect,     /* Method: AllocMemoryProtect */
+    FakeOsLinux_FreeMemoryProtect,      /* Method: FreeMemoryProtect  */
+    0,                                  /* Data:   infoSize           */
 };
 

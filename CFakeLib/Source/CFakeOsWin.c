@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 /******************************************************************************
- * @File    CFakeOsWin.h
+ * @File    CFakeOsWin.c
  * @Brief   It provide windows related interface for internal use in CFake.
  ******************************************************************************/
+
 #include <windows.h>
 #include <assert.h>
 #include "CFakeOs.h"
@@ -24,22 +25,30 @@
 #include "CFakePlatform.h"
 #include "CFakeHw.h"
 
-/* INFO Format: 0xAA, 'old_protect', '0xAA' */
-#define FAKE_OS_INFO_SIZE               (sizeof(DWORD) + 2)
-#define FAKE_OS_INFO_GUARDER_BYTE       0xAA
+/* INFO Format: tag, 'old_protect', tag. tag: 1 byte */
+#define FAKE_OS_INFO_SIZE   (sizeof(DWORD) + 2)
+
+/* Tag byte to guard data */
+#define FAKE_OS_INFO_GUARDER_BYTE   0xAA
+
+/* INFO Format: tag, 'old_protect', tag. tag: 1 byte */
 #define FAKE_OS_INFO_HEADER(infoPtr)    ((TFakeU8 *)(infoPtr) + 1)
 
+/* INFO Format: tag1, 'old_protect bytes', tag2.*/
 static void FakeOsWin_SaveDataInfo(DWORD old_protect, TFakeU8 * infoPtr)
 {
+    /* Set guarder byte in tag1 */
     infoPtr[0] = FAKE_OS_INFO_GUARDER_BYTE;
 
     (void)memcpy(FAKE_OS_INFO_HEADER(infoPtr), &old_protect, sizeof(DWORD));
 
+    /* Set guarder byte in tag2 */
     infoPtr[FAKE_OS_INFO_SIZE - 1] = FAKE_OS_INFO_GUARDER_BYTE;
 }
 
 /************************* Method Definitions Start ***************************/
 
+/* Method: Alloc memory protection(Before modify code section of fake action) */
 static void 
 FakeOsWin_AllocMemoryProtect(SFakeConfigParam * configParamPtr,
                              TFakeU8 *          infoPtr)
@@ -47,29 +56,40 @@ FakeOsWin_AllocMemoryProtect(SFakeConfigParam * configParamPtr,
     DWORD       old_protect;
     TFakeUInt   codeSize = gFakeHw.GetCorruptedCodeSize();
 
+    /* Set writable memory protection for the necessary code section */
     if (!VirtualProtect(configParamPtr->funcAddr,
                         codeSize,
                         PAGE_WRITECOPY,
                         &old_protect)) {
-        gFakePlatform.RaiseFatal("Fail to alloc for writing code!");
+        gFakePlatform.RaiseFatal("Fail to alloc for writing code! "
+                                 "addr: %p, size: %d",
+                                 configParamPtr->funcAddr,
+                                 codeSize);
     }
 
+    /* Save original memory protection */
     FakeOsWin_SaveDataInfo(old_protect, infoPtr);
 }
 
+/* Method: Free memory protection(After modify code section of fake action) */
 static void
 FakeOsWin_FreeMemoryProtect(SFakeConfigParam * configParamPtr,
                             TFakeU8          * infoPtr)
 {
-    DWORD old_protect;
+    DWORD       old_protect;
+    TFakeUInt   codeSize = gFakeHw.GetCorruptedCodeSize();
 
     (void)memcpy(&old_protect, FAKE_OS_INFO_HEADER(infoPtr), sizeof(DWORD));
 
+    /* Restore original memory protection */
     if (!VirtualProtect(configParamPtr->funcAddr, 
-                        gFakeHw.GetCorruptedCodeSize(),
+                        codeSize,
                         old_protect,
                         &old_protect)) {
-        gFakePlatform.RaiseFatal("Fail to free from writing code!");
+        gFakePlatform.RaiseFatal("Fail to free from writing code! "
+                                 "addr: %p, size: %d",
+                                 configParamPtr->funcAddr,
+                                 codeSize);
     }
 }
 
@@ -77,8 +97,8 @@ FakeOsWin_FreeMemoryProtect(SFakeConfigParam * configParamPtr,
 
 /* Component Object Definition(Singleton Pattern) */
 SFakeOs gFakeOs = {
-    FakeOsWin_AllocMemoryProtect,
-    FakeOsWin_FreeMemoryProtect,
-    FAKE_OS_INFO_SIZE,
+    FakeOsWin_AllocMemoryProtect,       /* Method: AllocMemoryProtect */
+    FakeOsWin_FreeMemoryProtect,        /* Method: FreeMemoryProtect  */
+    FAKE_OS_INFO_SIZE,                  /* Data:   infoSize           */
 };
 

@@ -27,6 +27,7 @@
  *          You may add this library to an existing unit testing framework
  *          to power your testing performance, e.g. cmockery, CppUnit.
  ******************************************************************************/
+
 #include "CFakePlatform.h"
 #include "CFakeDatabase.h"
 #include "CFakeLog.h"
@@ -62,20 +63,20 @@ static void Fake_On(SFakeConfigParam * configParamPtr)
     if (dataHandle != NULL)
     {
         gFakeDb.ReadConfigParam(dataHandle, &oldParam);
-        gFakeLog.Warning("%s(0x%X) is faked by %s(0x%X) yet! "
+        gFakeLog.Warning("%s(%p) is faked by %s(%p) yet! "
                          "Recover now..",
                          oldParam.funcName,
-                         (TFakeUInt)oldParam.funcAddr,
+                         oldParam.funcAddr,
                          oldParam.mockName,
-                         (TFakeUInt)oldParam.mockAddr);
+                         oldParam.mockAddr);
         Fake_Off(&oldParam);
     }
 
-    gFakeLog.Info("Fake_On: %s(0x%X) => %s(0x%X)",
+    gFakeLog.Info("Fake_On: %s(%p) => %s(%p)",
                   configParamPtr->funcName,
-                  (TFakeUInt)configParamPtr->funcAddr,
+                  configParamPtr->funcAddr,
                   configParamPtr->mockName,
-                  (TFakeUInt)configParamPtr->mockAddr);
+                  configParamPtr->mockAddr);
 
     dataInfoPtr = gFakePlatform.EnableMock(configParamPtr);
     (void)gFakeDb.PushDataInfo(configParamPtr, dataInfoPtr);
@@ -87,16 +88,16 @@ static void Fake_Off(SFakeConfigParam * configParamPtr)
     SFakeDataHandle   dataHandle;
     SFakeDataInfo   * dataInfoPtr;
 
-    gFakeLog.Info("Fake_Off: Recover %s(0x%X)",
+    gFakeLog.Info("Fake_Off: Recover %s(%p)",
                   configParamPtr->funcName,
-                  (TFakeUInt)configParamPtr->funcAddr);
+                  configParamPtr->funcAddr);
 
     dataHandle = gFakeDb.GetDataHandle(configParamPtr);
     if (dataHandle == NULL)
     {
-        gFakeLog.Warning("%s(0x%X) isn't faked by any func!",
+        gFakeLog.Warning("%s(%p) isn't faked by any func!",
                          configParamPtr->funcName,
-                         (TFakeUInt)configParamPtr->funcAddr);
+                         configParamPtr->funcAddr);
         return;
     }
 

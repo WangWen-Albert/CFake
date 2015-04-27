@@ -20,13 +20,12 @@
 
 Target := libcmockery.a
 
-CFLAGS += -Wall -O -g -I"."
+CFLAGS = -Wall -O -g -I"."
 
 all: $(Target)
 
 $(Target): cmockery.o
 	ar cru $@ $^
-	rm $^
 
 %.o: %.c
 	$(CC) -c $? $(INCLUDE) $(CFLAGS)
