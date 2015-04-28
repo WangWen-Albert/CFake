@@ -84,5 +84,5 @@ Use it like "Make x86win32" under CFakeLib/Source
 Run quick test case for linux 32 system on x86 hw architecture
 ```bash
 cd Test;
-make clean;make x86linux86
+make clean;make x86linux32
 ```
