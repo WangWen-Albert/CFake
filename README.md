@@ -1,4 +1,4 @@
-# CFake
+# CFake [![Build Status](https://travis-ci.org/WangWen-Albert/CFake.svg)](https://travis-ci.org/WangWen-Albert/CFake)
 A fast and simple solution to do unit testing for C/C++ program.
 
 ## Purpose
