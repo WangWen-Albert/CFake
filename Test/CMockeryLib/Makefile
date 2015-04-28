@@ -22,6 +22,14 @@ Target := libcmockery.a
 
 CFLAGS = -Wall -O -g -I"."
 
+ifeq ($(LIB_SYS), 32)
+	CFLAGS += -m32
+endif
+
+ifeq ($(LIB_SYS), 64)
+	CFLAGS += -m64
+endif
+
 all: $(Target)
 
 $(Target): cmockery.o

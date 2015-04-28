@@ -16,9 +16,9 @@ to power your testing performance, e.g. [cmockery](https://code.google.com/p/cmo
 
 ## API
 ```c
-#define FAKE_ON(func, mock) ......  //Macro API: Fake one func with anther mock
-#define FAKE_OFF(func)      ......  //Macro API: Release the faked func
-#define FAKE_RESET()        ......  //Macro API: Reset fake database and release all faked func.
+#define FAKE_ON(func, mock) ...  //Macro API: Fake one func with anther mock
+#define FAKE_OFF(func)      ...  //Macro API: Release the faked func
+#define FAKE_RESET()        ...  //Macro API: Reset fake database and release all faked func.
 ```
 
 ## Examples:
@@ -72,8 +72,17 @@ void Test_LifeNext_Success(void **state)
 ## Build the library
 
 The following option is used for different system.
+Use it like "Make x86win32" under CFakeLib/Source
 
 * 'x86win32' &ndash; Make static library for windows 32 system on x86 hw architecture;
 * 'x86win64' &ndash; Make static library for windows 64 system on x86 hw architecture;
 * 'x86linux32' &ndash; Make static library for linux 32 system on x86 hw architecture;
 * 'x86linux64' &ndash; Make static library for linux 32 system on x86 hw architecture;
+
+## Run quick test case
+
+Run quick test case for linux 32 system on x86 hw architecture
+```bash
+cd Test;
+make clean;make x86linux86
+```

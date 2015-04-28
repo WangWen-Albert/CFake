@@ -3,4 +3,4 @@ compiler:
   - gcc
   - clang
 # Change this to your needs
-script: make -C ./CFakeLib/Source libfake_x86linux32; make -C ./CFakeLib/Source libfake_x86linux64
+script: make -C Test clean; make -C Test x86linux32

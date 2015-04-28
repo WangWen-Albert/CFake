@@ -15,39 +15,121 @@
 # GNU Makefile
 #
 # Describe:
-# This script is used to make a program to test the library CFakeLib
+# This script is used to build and run quick test case for CFakeLib
 ###########################################################################
 
-Target := AutoTest.exe
+all: help
 
-CFLAGS := -Wall -O -g -fprofile-arcs -ftest-coverage
+## Build all CC&S and DSPHWAPI targets
+.PHONY: x86win32
+x86win32:
+	@echo ""
+	@echo "-------------- Build CMockery LIB     ------------"
+	$(MAKE) -C CMockeryLib LIB_SYS=32
+	@echo "-------------- Build CMockery Success ------------"
+	@echo ""
+	@echo "-------------- Build CFake LIB     ------------"
+	$(MAKE) -C ../CFakeLib/Source x86win32
+	@echo "-------------- Build CFake Success ------------"
+	@echo ""
+	@echo "-------------- Build Quick Test Case   ------------"
+	$(MAKE) -f Test_Build.mk TEST_SYS=32
+	@echo "-------------- Build Test Case Success ------------"
+	@echo ""
+	@echo "-------------- Run Quick Test Case   ------------"
+	./AutoTest
+	@echo "-------------- Run Test Case Success ------------"
+	@echo ""
 
-CFLAGS += -I"." 			\
-          -I"../CFakeLib" 	\
-		  -I"CMockeryLib"	\
+.PHONY: x86win64
+x86win64:
+	@echo ""
+	@echo "-------------- Build CMockery LIB     ------------"
+	$(MAKE) -C CMockeryLib LIB_SYS=64
+	@echo "-------------- Build CMockery Success ------------"
+	@echo ""
+	@echo "-------------- Build CFake LIB     ------------"
+	$(MAKE) -C ../CFakeLib/Source x86win64
+	@echo "-------------- Build CFake Success ------------"
+	@echo ""
+	@echo "-------------- Build Quick Test Case   ------------"
+	$(MAKE) -f Test_Build.mk TEST_SYS=64
+	@echo "-------------- Build Test Case Success ------------"
+	@echo ""
+	@echo "-------------- Run Quick Test Case   ------------"
+	./AutoTest
+	@echo "-------------- Run Test Case Success ------------"
+	@echo ""
 
-LIB_CMOCKERY :=	"./CMockeryLib/libcmockery.a"
-LIB_FAKE     := "../CFakeLib/libfake.a"
+.PHONY: x86linux32
+x86linux32:
+	@echo ""
+	@echo "-------------- Build CMockery LIB     ------------"
+	$(MAKE) -C CMockeryLib LIB_SYS=32
+	@echo "-------------- Build CMockery Success ------------"
+	@echo ""
+	@echo "-------------- Build CFake LIB     ------------"
+	$(MAKE) -C ../CFakeLib/Source x86linux32
+	@echo "-------------- Build CFake Success ------------"
+	@echo ""
+	@echo "-------------- Build Quick Test Case   ------------"
+	$(MAKE) -f Test_Build.mk TEST_SYS=32
+	@echo "-------------- Build Test Case Success ------------"
+	@echo ""
+	@echo "-------------- Run Quick Test Case   ------------"
+	./AutoTest
+	@echo "-------------- Run Test Case Success ------------"
+	@echo ""
 
-C_TEST_CODES :=			\
-	Test_Main.c			\
-	Test_GameOfLife.c	\
-	Test_CFakeLib.c		\
+.PHONY: x86linux64
+x86linux64:
+	@echo ""
+	@echo "-------------- Build CMockery LIB     ------------"
+	$(MAKE) -C CMockeryLib LIB_SYS=64
+	@echo "-------------- Build CMockery Success ------------"
+	@echo ""
+	@echo "-------------- Build CFake LIB     ------------"
+	$(MAKE) -C ../CFakeLib/Source x86linux64
+	@echo "-------------- Build CFake Success ------------"
+	@echo ""
+	@echo "-------------- Build Quick Test Case   ------------"
+	$(MAKE) -f Test_Build.mk TEST_SYS=64
+	@echo "-------------- Build Test Case Success ------------"
+	@echo ""
+	@echo "-------------- Run Quick Test Case   ------------"
+	./AutoTest
+	@echo "-------------- Run Test Case Success ------------"
+	@echo ""
 
-C_TEST_OBJ	:=	$(patsubst %.c, %.o, ${C_TEST_CODES})
-
-$(Target): $(C_TEST_OBJ) $(LIB_CMOCKERY)
-	$(CC) -o $@ $(CFLAGS) $^ $(LIB_FAKE)
-
-$(LIB_CMOCKERY):
-	$(MAKE) -C CMockeryLib
-
-%.o: %.c
-	$(CC) -c $? $(INCLUDE) $(CFLAGS)
-
-.PHONY : clean
+.PHONY: clean
 clean:
+	@echo "-------------- Clean Quick Test Case   ------------"
 	$(MAKE) -C CMockeryLib clean
-	rm -f $(Target) *.o *.gcda *.gcno
-	rm -rf Report
-	
+	$(MAKE) -C ../CFakeLib/Source clean
+	$(RM) AutoTest* *.o *.d
+	@echo "-------------- Clean Test Case Success  ------------"
+
+## help
+.PHONY: help
+help:
+	@echo ""
+	@echo "################### CFake Quick Test GNU makefile ######################"
+	@echo "# Usage:                                                               #"
+	@echo "#  make [help] | [clean] | [<target>]                                  #"
+	@echo "#                                                                      #"
+	@echo "# help:                                                                #"
+	@echo "#  Help from this Makefile                                             #"
+	@echo "#                                                                      #"
+	@echo "# Clean:                                                               #"
+	@echo "#  clean             Clean objects, depend files, etc                  #"
+	@echo "#                                                                      #"
+	@echo "# Targets (Unit Tests):                                                #"
+	@echo "#  x86win32          Build and run quick test for windows 32 system    #"
+	@echo "#                    on x86 hw architecture                            #"
+	@echo "#  x86win64          Build and run quick test for windows 64 system    #"
+	@echo "#                    on x86 hw architecture                            #"
+	@echo "#  x86linux32        Build and run quick test for linux 32 system      #"
+	@echo "#                    on x86 hw architecture                            #"
+	@echo "#  x86linux64        Build and run quick test for linux 32 system      #"
+	@echo "#                    on x86 hw architecture                            #"
+	@echo "########################################################################"
