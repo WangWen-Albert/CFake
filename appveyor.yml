@@ -1,0 +1,12 @@
+version: 1.0.{build}
+os: MinGW
+configuration: QuickTest
+platform:
+- x86
+- x64
+build_script:
+- cd Test
+- make clean
+- make x86win32
+- make clean
+- make x86win64
