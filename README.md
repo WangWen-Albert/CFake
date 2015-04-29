@@ -38,13 +38,9 @@ Background Knowledage
 
 ## Description
 
-When using FAKE_ON to fake one func with anther mock in your
-test case, the mock will be called instead of the faked func.
-And the fake action could be cancel by FAKE_OFF or FAKE_RESET
-at the end of the case. 
-
-In another word, one func could be dynamically replaced as any
-other stub during testing program is running.
+When using FAKE_ON to fake one func with anther mock in your test case,
+the mock will be called instead of the faked func.
+And the fake action could be cancel by FAKE_OFF or FAKE_RESET at the end of the case. 
 
 ## API
 ```c

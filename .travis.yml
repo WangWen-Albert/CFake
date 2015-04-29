@@ -2,11 +2,8 @@ language: c
 compiler:
   - gcc
   - clang
-install:
-  - sudo apt-get install gcc-multilib
 script:
   - make -C Test clean
   - make -C Test x86linux32
   - make -C Test clean
   - make -C Test x86linux64
- 
