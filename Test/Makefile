@@ -24,90 +24,90 @@ all: help
 .PHONY: x86win32
 x86win32:
 	@echo ""
-	@echo "-------------- Build CMockery LIB     ------------"
+	@echo "------------ x86win32: Build CMockery LIB      ----------"
 	$(MAKE) -C CMockeryLib LIB_SYS=32
-	@echo "-------------- Build CMockery Success ------------"
+	@echo "------------ x86win32: Build CMockery Success  ----------"
 	@echo ""
-	@echo "-------------- Build CFake LIB     ------------"
+	@echo "------------ x86win32: Build CFake LIB         ----------"
 	$(MAKE) -C ../CFakeLib/Source x86win32
-	@echo "-------------- Build CFake Success ------------"
+	@echo "------------ x86win32: Build CFake Success     ----------"
 	@echo ""
-	@echo "-------------- Build Quick Test Case   ------------"
+	@echo "------------ x86win32: Build Quick Test Case   ----------"
 	$(MAKE) -f Test_Build.mk TEST_SYS=32
-	@echo "-------------- Build Test Case Success ------------"
+	@echo "------------ x86win32: Build Test Case Success ----------"
 	@echo ""
-	@echo "-------------- Run Quick Test Case   ------------"
+	@echo "------------ x86win32: Run Quick Test Case     ----------"
 	./AutoTest
-	@echo "-------------- Run Test Case Success ------------"
+	@echo "------------ x86win32: Run Test Case Success   ----------"
 	@echo ""
 
 .PHONY: x86win64
 x86win64:
 	@echo ""
-	@echo "-------------- Build CMockery LIB     ------------"
+	@echo "------------ x86win64: Build CMockery LIB      ----------"
 	$(MAKE) -C CMockeryLib LIB_SYS=64
-	@echo "-------------- Build CMockery Success ------------"
+	@echo "------------ x86win64: Build CMockery Success  ----------"
 	@echo ""
-	@echo "-------------- Build CFake LIB     ------------"
+	@echo "------------ x86win64: Build CFake LIB         ----------"
 	$(MAKE) -C ../CFakeLib/Source x86win64
-	@echo "-------------- Build CFake Success ------------"
+	@echo "------------ x86win64: Build CFake Success     ----------"
 	@echo ""
-	@echo "-------------- Build Quick Test Case   ------------"
+	@echo "------------ x86win64: Build Quick Test Case   ----------"
 	$(MAKE) -f Test_Build.mk TEST_SYS=64
-	@echo "-------------- Build Test Case Success ------------"
+	@echo "------------ x86win64: Build Test Case Success ----------"
 	@echo ""
-	@echo "-------------- Run Quick Test Case   ------------"
+	@echo "------------ x86win64: Run Quick Test Case     ----------"
 	./AutoTest
-	@echo "-------------- Run Test Case Success ------------"
+	@echo "------------ x86win64: Run Test Case Success   ----------"
 	@echo ""
 
 .PHONY: x86linux32
 x86linux32:
 	@echo ""
-	@echo "-------------- Build CMockery LIB     ------------"
+	@echo "------------ x86linux32: Build CMockery LIB      ----------"
 	$(MAKE) -C CMockeryLib LIB_SYS=32
-	@echo "-------------- Build CMockery Success ------------"
+	@echo "------------ x86linux32: Build CMockery Success  ----------"
 	@echo ""
-	@echo "-------------- Build CFake LIB     ------------"
+	@echo "------------ x86linux32: Build CFake LIB         ----------"
 	$(MAKE) -C ../CFakeLib/Source x86linux32
-	@echo "-------------- Build CFake Success ------------"
+	@echo "------------ x86linux32: Build CFake Success     ----------"
 	@echo ""
-	@echo "-------------- Build Quick Test Case   ------------"
+	@echo "------------ x86linux32: Build Quick Test Case   ----------"
 	$(MAKE) -f Test_Build.mk TEST_SYS=32
-	@echo "-------------- Build Test Case Success ------------"
+	@echo "------------ x86linux32: Build Test Case Success ----------"
 	@echo ""
-	@echo "-------------- Run Quick Test Case   ------------"
+	@echo "------------ x86linux32: Run Quick Test Case     ----------"
 	./AutoTest
-	@echo "-------------- Run Test Case Success ------------"
+	@echo "------------ x86linux32: Run Test Case Success   ----------"
 	@echo ""
 
 .PHONY: x86linux64
 x86linux64:
 	@echo ""
-	@echo "-------------- Build CMockery LIB     ------------"
+	@echo "------------ x86linux64: Build CMockery LIB      ----------"
 	$(MAKE) -C CMockeryLib LIB_SYS=64
-	@echo "-------------- Build CMockery Success ------------"
+	@echo "------------ x86linux64: Build CMockery Success  ----------"
 	@echo ""
-	@echo "-------------- Build CFake LIB     ------------"
+	@echo "------------ x86linux64: Build CFake LIB         ----------"
 	$(MAKE) -C ../CFakeLib/Source x86linux64
-	@echo "-------------- Build CFake Success ------------"
+	@echo "------------ x86linux64: Build CFake Success     ----------"
 	@echo ""
-	@echo "-------------- Build Quick Test Case   ------------"
+	@echo "------------ x86linux64: Build Quick Test Case   ----------"
 	$(MAKE) -f Test_Build.mk TEST_SYS=64
-	@echo "-------------- Build Test Case Success ------------"
+	@echo "------------ x86linux64: Build Test Case Success ----------"
 	@echo ""
-	@echo "-------------- Run Quick Test Case   ------------"
+	@echo "------------ x86linux64: Run Quick Test Case     ----------"
 	./AutoTest
-	@echo "-------------- Run Test Case Success ------------"
+	@echo "------------ x86linux64: Run Test Case Success   ----------"
 	@echo ""
 
 .PHONY: clean
 clean:
-	@echo "-------------- Clean Quick Test Case   ------------"
+	@echo "------------ Clean Quick Test Case    ----------"
 	$(MAKE) -C CMockeryLib clean
 	$(MAKE) -C ../CFakeLib/Source clean
 	$(RM) AutoTest* *.o *.d
-	@echo "-------------- Clean Test Case Success  ------------"
+	@echo "------------ Clean Test Case Success  ----------"
 
 ## help
 .PHONY: help
@@ -130,6 +130,6 @@ help:
 	@echo "#                    on x86 hw architecture                            #"
 	@echo "#  x86linux32        Build and run quick test for linux 32 system      #"
 	@echo "#                    on x86 hw architecture                            #"
-	@echo "#  x86linux64        Build and run quick test for linux 32 system      #"
+	@echo "#  x86linux64        Build and run quick test for linux 64 system      #"
 	@echo "#                    on x86 hw architecture                            #"
 	@echo "########################################################################"

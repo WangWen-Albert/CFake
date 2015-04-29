@@ -78,7 +78,7 @@
  * Corrupted code format for fake action, i.e. trampoline asm code format     *
  * SYS32 : __asm("jmp  $mock")                  : 0xE9 {$mock - $func - 5}    *
  * SYS32 : __asm("movl $mock, %eax; jmpl %eax") : 0xB8 {$mock} 0xFF 0xE0      *
- * SYS64 : __asm("movq $mock, %rax; jmpq %rax") : 0x48 0xB8 {$mock} 0xFF 0xE0 * 
+ * SYS64 : __asm("mov  $mock, %rdx; jmpq %rdx") : 0x48 0x8B {$mock} 0xFF 0xE2 * 
  ******************************************************************************/
 #if defined(FAKE_SYS32)
 TFakeU8 gFakeHwCorruptedCode[FAKE_HW_CORRUPTED_CODE_SIZE] = {
@@ -86,7 +86,7 @@ TFakeU8 gFakeHwCorruptedCode[FAKE_HW_CORRUPTED_CODE_SIZE] = {
 };
 #elif defined(FAKE_SYS64)
 TFakeU8 gFakeHwCorruptedCode[FAKE_HW_CORRUPTED_CODE_SIZE] = {
-    0x48, 0xB8, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xFF, 0xE0,
+    0x48, 0xBA, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xFF, 0xE2,
 };
 #endif
 
