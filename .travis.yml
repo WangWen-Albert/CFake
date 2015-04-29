@@ -14,7 +14,7 @@ script:
   - make -C Test x86linux64
 ---
 os:
-  - windows
+  - windowsxp
 language: c
 compiler:
   - gcc
