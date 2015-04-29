@@ -1,5 +1,3 @@
-os:
-  - linux
 language: c
 compiler:
   - gcc
@@ -12,15 +10,3 @@ script:
   - make -C Test x86linux32
   - make -C Test clean
   - make -C Test x86linux64
----
-os:
-  - windowsxp
-language: c
-compiler:
-  - gcc
-  - clang
-script:
-  - make -C Test clean
-  - make -C Test x86win32
-  - make -C Test clean
-  - make -C Test x86win64
