@@ -106,7 +106,9 @@ clean:
 	@echo "------------ Clean Quick Test Case    ----------"
 	$(MAKE) -C CMockeryLib clean
 	$(MAKE) -C ../CFakeLib/Source clean
-	$(RM) AutoTest* *.o *.d
+	$(RM) AutoTest*
+	$(RM) *.o
+	$(RM) *.d
 	@echo "------------ Clean Test Case Success  ----------"
 
 ## help

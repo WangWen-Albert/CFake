@@ -39,7 +39,9 @@ x86linux64:
 
 .PHONY: clean
 clean:
-	$(RM) ../libfake.a *.o *.d
+	$(RM) ../libfake.a
+	$(RM) *.o
+	$(RM) *.d
 
 ## help
 .PHONY: help

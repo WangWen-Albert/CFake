@@ -40,4 +40,5 @@ $(Target): cmockery.o
 
 .PHONY : clean
 clean:
-	rm -f ${X86Win} $(Target) cmockery.o
+	$(RM) $(Target)
+	$(RM) cmockery.o
