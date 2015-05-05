@@ -1,10 +1,16 @@
-# CFake [![Build Status](https://travis-ci.org/WangWen-Albert/CFake.svg)](https://travis-ci.org/WangWen-Albert/CFake)
+# CFake
 
 CFake is a library for providing a fast and simple solution to do unit testing for C/C++ program,
 solving how to fake one func with another mock(i.e. stub func) during runtime.
 
 It's not a new unit testing framework. However, you could add this library to any existing 
 framework(e.g. [cmockery](https://code.google.com/p/cmockery/)) to enhance the testing capability.
+
+## CI
+
+Linux [![Build Status](https://travis-ci.org/WangWen-Albert/CFake.svg)](https://travis-ci.org/WangWen-Albert/CFake)
+
+Windows[Not support now]
 
 ## Purpose
 
@@ -20,7 +26,7 @@ What's different of the faking technology from some other library?
 * The faking action could be done for func either in external module or in same module;
 * The faking action could be cancel at the end of the case;
 * The stub func may has any name and could be built with original func;
-# The stub func could be different for a same func in different case, i.e. dynamic stub;
+* The stub func could be different for a same func in different case, i.e. dynamic stub;
 
 ## Solution
 
@@ -100,7 +106,8 @@ void Test_LifeNext_Success(void **state)
 ## Build the library
 
 The following option is used for different system.
-Use it like "Make x86win32" under CFakeLib/Source
+Use it like "make x86win32" under CFakeLib/Source(Proposed in cygwin),
+or "make x86linux32" under CFakeLib/Source(Proposed in linux).
 
 * 'x86win32'   &ndash; Build library for windows 32 system on x86 hw architecture;
 * 'x86win64'   &ndash; Build library for windows 64 system on x86 hw architecture;
@@ -109,8 +116,14 @@ Use it like "Make x86win32" under CFakeLib/Source
 
 ## Run quick test case
 
-Run quick test case for linux 32 system on x86 hw architecture
+Run quick test case for windows 32 system on x86 hw architecture(Proposed in cygwin)
 ```bash
 cd Test;
-make clean;make x86linux32
+make clean; make x86win32
+```
+
+Run quick test case for linux 32 system on x86 hw architecture(Proposed in linux)
+```bash
+cd Test;
+make clean; make x86linux32
 ```
